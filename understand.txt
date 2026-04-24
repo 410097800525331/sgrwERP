@@ -1,0 +1,16 @@
+BigDecimal이란?
+BigDecimal은 자바(java.math 패키지)에서 정확한 소수점 계산과 매우 큰 수의 연산을 위해 사용하는 불변(Immutable) 객체
+* 사용 예시 (Java)
+import java.math.BigDecimal;
+
+BigDecimal num1 = new BigDecimal("10.0");
+BigDecimal num2 = new BigDecimal("3.0");
+
+// 더하기
+BigDecimal sum = num1.add(num2); // 13.0
+// 빼기
+BigDecimal sub = num1.subtract(num2); // 7.0
+// 곱하기
+BigDecimal mul = num1.multiply(num2); // 30.00
+// 나누기 (나누어 떨어지지 않을 경우 scale과 roundingMode 필수)
+BigDecimal div = num1.divide(num2, 2, RoundingMode.HALF_UP); // 3.33
