@@ -16,11 +16,13 @@ public class JournalDetail {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @Column(name = "journal_entry_id", nullable = false)
-  private Long journalEntryId;
+  @ManyToOne
+  @JoinColumn(name = "journal_entry_id")
+  private JournalEntry journalEntry;
 
-  @Column(name = "account_id", nullable = false)
-  private Long accountId;
+  @ManyToOne
+  @JoinColumn(name = "account_id")
+  private Account account;
 
   @Column(precision = 15, scale = 2)
   private BigDecimal debit;
