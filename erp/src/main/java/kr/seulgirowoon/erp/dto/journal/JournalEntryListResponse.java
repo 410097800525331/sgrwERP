@@ -9,7 +9,6 @@ import java.time.LocalDate;
 @Getter
 @Builder
 public class JournalEntryListResponse {
-
     private Long id;
     private String description;
     private BigDecimal totalDebit;

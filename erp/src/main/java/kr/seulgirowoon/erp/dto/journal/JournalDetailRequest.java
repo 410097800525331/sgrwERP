@@ -12,7 +12,7 @@ public class JournalDetailRequest {
   private BigDecimal debit;
   private BigDecimal credit;
 
-  public JournalDetailRequest(Long accountId, BigDecimal debit, BigDecimal credit) {
+    public JournalDetailRequest(Long accountId, BigDecimal debit, BigDecimal credit) {
     this.accountId = accountId;
     this.debit = debit;
     this.credit = credit;
