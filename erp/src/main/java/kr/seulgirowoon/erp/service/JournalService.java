@@ -1,6 +1,5 @@
 package kr.seulgirowoon.erp.service;
 
-import org.springframework.stereotype.Service;
 import kr.seulgirowoon.erp.dto.journal.JournalEntryRequest;
 import kr.seulgirowoon.erp.dto.journal.JournalEntryListResponse;
 
