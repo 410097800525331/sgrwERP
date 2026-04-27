@@ -13,6 +13,7 @@ import kr.seulgirowoon.erp.domain.JournalEntry;
 import kr.seulgirowoon.erp.dto.journal.JournalDetailRequest;
 import kr.seulgirowoon.erp.dto.journal.JournalEntryListResponse;
 import kr.seulgirowoon.erp.dto.journal.JournalEntryRequest;
+import kr.seulgirowoon.erp.dto.journal.Response.JournalEntryResponse;
 import kr.seulgirowoon.erp.repository.AccountRepository;
 import kr.seulgirowoon.erp.repository.JournalDetailRepository;
 import kr.seulgirowoon.erp.repository.JournalEntryRepository;
@@ -117,4 +118,19 @@ public class JournalServiceImpl implements JournalService {
         .toList();
   }
 
+  @Override
+  public List<JournalEntryResponse> getJournals(LocalDate startDate, LocalDate endDate) {
+
+    List<JournalEntry> list;
+
+    if (startDate != null && endDate != null) {
+      list = journalEntryRepository.findByEntryDateBetween(startDate, endDate);
+    } else {
+      list = journalEntryRepository.findAll();
+    }
+
+    return list.stream()
+        .map(JournalEntryResponse::from)
+        .toList();
+  }
 }
