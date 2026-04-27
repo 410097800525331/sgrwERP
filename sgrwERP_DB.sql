@@ -57,17 +57,17 @@ CREATE TABLE journal_details (
   CONSTRAINT fk_account FOREIGN KEY (account_id) REFERENCES accounts(id)
 );
 
--- 차변 (현금)
+-- 차변
 INSERT INTO journal_details (journal_entry_id, account_id, debit, credit)
 VALUES (1, 1, 11000, 0);
 
--- 대변 (매출)
+-- 매출
 INSERT INTO journal_details (journal_entry_id, account_id, debit, credit)
-VALUES (1, 5, 0, 10000);
+VALUES (1, 8, 0, 10000);
 
--- 대변 (부가세)
+-- 부가세
 INSERT INTO journal_details (journal_entry_id, account_id, debit, credit)
-VALUES (1, 3, 0, 1000);
+VALUES (1, 6, 0, 1000);
 
 -- 5. products (상품)
 CREATE TABLE products (

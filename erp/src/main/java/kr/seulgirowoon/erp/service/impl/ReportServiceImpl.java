@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 
 import kr.seulgirowoon.erp.domain.Account;
+import kr.seulgirowoon.erp.domain.AccountType;
 import kr.seulgirowoon.erp.domain.JournalDetail;
+import kr.seulgirowoon.erp.dto.account.BalanceSheetResponse;
 import kr.seulgirowoon.erp.dto.account.IncomeStatementResponse;
 import kr.seulgirowoon.erp.repository.AccountRepository;
 import kr.seulgirowoon.erp.repository.JournalDetailRepository;
@@ -25,10 +27,10 @@ public class ReportServiceImpl implements ReportService {
   public IncomeStatementResponse getIncomeStatement() {
 
     // 1. 수익 계정 조회
-    List<Account> revenueAccounts = accountRepository.findByType("REVENUE");
+    List<Account> revenueAccounts = accountRepository.findByType(AccountType.REVENUE);
 
     // 2. 비용 계정 조회
-    List<Account> expenseAccounts = accountRepository.findByType("EXPENSE");
+    List<Account> expenseAccounts = accountRepository.findByType(AccountType.EXPENSE);
 
     BigDecimal totalRevenue = BigDecimal.ZERO;
     BigDecimal totalExpense = BigDecimal.ZERO;
@@ -70,6 +72,70 @@ public class ReportServiceImpl implements ReportService {
         .totalRevenue(totalRevenue)
         .totalExpense(totalExpense)
         .profit(profit)
+        .build();
+  }
+
+  @Override
+  public BalanceSheetResponse getBalanceSheet() {
+
+    List<Account> assetAccounts = accountRepository.findByType(AccountType.ASSET);
+    List<Account> liabilityAccounts = accountRepository.findByType(AccountType.LIABILITY);
+    List<Account> equityAccounts = accountRepository.findByType(AccountType.EQUITY);
+
+    BigDecimal totalAsset = BigDecimal.ZERO;
+    BigDecimal totalLiability = BigDecimal.ZERO;
+    BigDecimal totalEquity = BigDecimal.ZERO;
+
+    // 자산
+    for (Account acc : assetAccounts) {
+      List<JournalDetail> details = journalDetailRepository.findByAccountId(acc.getId());
+
+      BigDecimal debit = details.stream()
+          .map(d -> d.getDebit() == null ? BigDecimal.ZERO : d.getDebit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal credit = details.stream()
+          .map(d -> d.getCredit() == null ? BigDecimal.ZERO : d.getCredit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      totalAsset = totalAsset.add(debit.subtract(credit));
+    }
+
+    // 부채
+    for (Account acc : liabilityAccounts) {
+      List<JournalDetail> details = journalDetailRepository.findByAccountId(acc.getId());
+
+      BigDecimal debit = details.stream()
+          .map(d -> d.getDebit() == null ? BigDecimal.ZERO : d.getDebit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal credit = details.stream()
+          .map(d -> d.getCredit() == null ? BigDecimal.ZERO : d.getCredit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      totalLiability = totalLiability.add(credit.subtract(debit));
+    }
+
+    // 자본
+    for (Account acc : equityAccounts) {
+      List<JournalDetail> details = journalDetailRepository.findByAccountId(acc.getId());
+
+
+      BigDecimal debit = details.stream()
+          .map(d -> d.getDebit() == null ? BigDecimal.ZERO : d.getDebit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      BigDecimal credit = details.stream()
+          .map(d -> d.getCredit() == null ? BigDecimal.ZERO : d.getCredit())
+          .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+      totalEquity = totalEquity.add(credit.subtract(debit));
+    }
+
+    return BalanceSheetResponse.builder()
+        .totalAsset(totalAsset)
+        .totalLiability(totalLiability)
+        .totalEquity(totalEquity)
         .build();
   }
 }
